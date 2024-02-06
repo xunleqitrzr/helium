@@ -5,4 +5,6 @@ project(helium)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(helium src/main.cpp
-        src/tokenization.hpp)
+        src/tokenization.hpp
+        src/parser.hpp
+        src/generation.hpp)
