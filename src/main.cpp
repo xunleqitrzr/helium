@@ -4,6 +4,7 @@
 #include <optional>
 #include <vector>
 
+#include "./parser.hpp"
 #include "./tokenization.hpp"
 
 std::string tokens_to_asm(const std::vector<Token>& tokens) {
