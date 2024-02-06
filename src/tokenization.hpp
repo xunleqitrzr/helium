@@ -52,7 +52,6 @@ public:
             else if (peek().value() == ';') {
                 consume();
                 tokens.push_back({.type = TokenType::semi});
-                buf.clear();
                 continue;
             }
             else if (std::isspace(peek().value())) {
@@ -69,7 +68,7 @@ public:
 private:
 
     [[nodiscard]] inline std::optional<char> peek(int ahead = 1) const {
-        if (m_index + ahead >= m_src.length()) {
+        if (m_index + ahead > m_src.length()) {
             return {};
         } else {
             return m_src.at(m_index);

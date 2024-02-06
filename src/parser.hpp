@@ -38,7 +38,9 @@ public:
                     std::cerr << "Invalid expression" << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                if (!peek().has_value() || peek().value().type != TokenType::semi) {
+                if ((peek().has_value()) && (peek().value().type == TokenType::semi)) {
+                    consume();
+                } else {
                     std::cerr << "Invalid expression" << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -51,7 +53,7 @@ public:
 private:
 
     [[nodiscard]] inline std::optional<Token> peek(int ahead = 1) const {
-        if (m_index + ahead >= m_tokens.size()) {
+        if (m_index + ahead > m_tokens.size()) {
             return {};
         } else {
             return m_tokens.at(m_index);
