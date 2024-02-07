@@ -1,1 +1,3 @@
-exit (7);
+var a = 5;
+var b = 7;
+exit (b);
