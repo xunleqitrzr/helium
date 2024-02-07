@@ -7,7 +7,12 @@
 enum class TokenType {
     exit,
     int_lit,
-    semi
+    semi,
+    l_paren,
+    r_paren,
+    ident,
+    var,
+    eq
 };
 
 struct Token {
@@ -35,9 +40,15 @@ public:
                     tokens.push_back({.type = TokenType::exit});
                     buf.clear();
                     continue;
+                }
+                else if (buf == "var") {
+                    tokens.push_back({.type = TokenType::var});
+                    buf.clear();
+                    continue;
                 } else {
-                    std::cerr << "Incorrect syntax" << std::endl;
-                    exit(EXIT_FAILURE);
+                    tokens.push_back({.type = TokenType::ident, .value = buf});
+                    buf.clear();
+                    continue;
                 }
             }
             else if (std::isdigit(peek().value())) {
@@ -49,9 +60,24 @@ public:
                 buf.clear();
                 continue;
             }
+            else if (peek().value() == '(') {
+                consume();
+                tokens.push_back({.type = TokenType::l_paren});
+                continue;
+            }
+            else if (peek().value() == ')') {
+                consume();
+                tokens.push_back({.type = TokenType::r_paren});
+                continue;
+            }
             else if (peek().value() == ';') {
                 consume();
                 tokens.push_back({.type = TokenType::semi});
+                continue;
+            }
+            else if (peek().value() == '=') {
+                consume();
+                tokens.push_back({.type = TokenType::eq});
                 continue;
             }
             else if (std::isspace(peek().value())) {
