@@ -10,7 +10,7 @@ $$
     \\
     [\text{expr}] &\to 
     \begin {cases}
-        \text{int\_lit} \\
+        \text{int-lit} \\
         \text{identifier}
     \end {cases}
 \end{align}
