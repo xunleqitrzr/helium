@@ -1,1 +1,2 @@
-exit 19;
+var x = 19
+exit(x);
