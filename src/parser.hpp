@@ -4,6 +4,7 @@
 #include <optional>
 #include <variant>
 
+#include "./arena.hpp"
 #include "./tokenization.hpp"
 
 struct NodeExprIntLit {
@@ -26,55 +27,65 @@ struct BinExprMulti {
     NodeExpr* rhs;
 };
 
-struct BinExpr {
+struct NodeBinaryExpr {
     std::variant<BinExprAdd*, BinExprMulti*> var;
 };
 
 struct NodeExpr {
-    std::variant<NodeExprIntLit*, NodeExprIdent*, BinExpr*> var;
+    std::variant<NodeExprIntLit*, NodeExprIdent*, NodeBinaryExpr*> var;
 };
 
 struct NodeStmtExit {
-    NodeExpr expr;
+    NodeExpr* expr;
 };
 
 struct NodeStmtVar {
     Token ident;
-    NodeExpr expr;
+    NodeExpr* expr;
 };
 
 struct NodeStmt {
-    std::variant<NodeStmtExit, NodeStmtVar> var;
+    std::variant<NodeStmtExit*, NodeStmtVar*> var;
 };
 
 struct NodeProg {
-    std::vector<NodeStmt> stmts;
+    std::vector<NodeStmt*> stmts;
 };
 
 class Parser {
 public:
-    inline explicit Parser(std::vector<Token> tokens) : m_tokens(std::move(tokens)){
+    inline explicit Parser(std::vector<Token> tokens)
+    : m_tokens(std::move(tokens)),
+      m_allocator(1024 * 1024 * 4) { // 4 megebytes allocated
 
     }
 
-    std::optional<NodeExpr> parse_expr() {
+    std::optional<NodeExpr*> parse_expr() {
         if (peek().has_value() && peek().value().type == TokenType::int_lit) {
-            return NodeExpr{.var = NodeExprIntLit {.int_lit = consume()}};
+            auto expr_int_lit = m_allocator.alloc<NodeExprIntLit>();
+            expr_int_lit->int_lit = consume();
+            auto expr = m_allocator.alloc<NodeExpr>();
+            expr->var = expr_int_lit;
+            return expr;
         }
         else if (peek().has_value() && peek().value().type == TokenType::ident) {
-            return NodeExpr {.var = NodeExprIdent {.ident = consume()}};
+            auto expr_ident = m_allocator.alloc<NodeExprIdent>();
+            expr_ident->ident = consume();
+            auto expr = m_allocator.alloc<NodeExpr>();
+            expr->var = expr_ident;
+            return expr;
         } else {
             return {};
         }
     }
 
-    std::optional<NodeStmt> parse_stmt() {
+    std::optional<NodeStmt*> parse_stmt() {
         if ((peek().value().type == TokenType::exit) && (peek(1).has_value()) && (peek(1).value().type == TokenType::l_paren)) {
             consume();
             consume();
-            NodeStmtExit stmt_exit;
+            auto stmt_exit = m_allocator.alloc<NodeStmtExit>();
             if (auto node_expr = parse_expr()) {
-                stmt_exit =  {.expr = node_expr.value()};
+                stmt_exit->expr =  node_expr.value();
             } else {
                 std::cerr << "Invalid expression" << std::endl;
                 exit(EXIT_FAILURE);
@@ -91,15 +102,18 @@ public:
                 std::cerr << "Semicolon `;` expected" << std::endl;
                 exit(EXIT_FAILURE);
             }
-            return NodeStmt {.var = stmt_exit};
+            auto stmt = m_allocator.alloc<NodeStmt>();
+            stmt->var = stmt_exit;
+            return stmt;
         } else if ((peek().has_value() && peek().value().type == TokenType::var) && // var
                 (peek(1).has_value() && peek(1).value().type == TokenType::ident) && // var 'abc'
                 (peek(2).has_value() && peek(2).value().type == TokenType::eq)) { // var 'abc =
             consume();
-            auto stmt_let = NodeStmtVar {.ident = consume()};
+            auto stmt_var = m_allocator.alloc<NodeStmtVar>();
+            stmt_var->ident = consume();
             consume();
             if (auto expr = parse_expr()) {
-                stmt_let.expr = expr.value();
+                stmt_var->expr = expr.value();
             } else {
                 std::cerr << "Invalid expression" << std::endl;
                 exit(EXIT_FAILURE);
@@ -110,7 +124,9 @@ public:
                 std::cerr << "Semicolon `;` expected" << std::endl;
                 exit(EXIT_FAILURE);
             }
-            return NodeStmt {.var = stmt_let};
+            auto stmt = m_allocator.alloc<NodeStmt>();
+            stmt->var = stmt_var;
+            return stmt;
         } else {
             return {};
         }
@@ -145,4 +161,6 @@ private:
 
     const std::vector<Token> m_tokens;
     size_t m_index = 0;
+
+    ArenaAllocator m_allocator;
 };

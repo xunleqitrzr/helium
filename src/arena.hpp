@@ -11,7 +11,7 @@ public:
     inline T* alloc() {
         void* offset = m_offset;
         m_offset += sizeof(T);
-        return offset;
+        return static_cast<T*>(offset);
     }
 
     inline ArenaAllocator(const ArenaAllocator& other) = delete;

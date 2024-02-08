@@ -4,7 +4,6 @@
 #include <optional>
 #include <vector>
 
-#include "./arena.hpp"
 #include "./generation.hpp"
 
 int main(int argc, char* argv[]) {
