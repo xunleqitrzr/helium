@@ -33,7 +33,7 @@ public:
                 offset << "QWORD [rsp + " << ((gen->m_stack_size - var.stack_loc - 1) * 8) << "]";
                 gen->push(offset.str());
             }
-            void operator()(const NodeBinaryExpr* bin_expr) const {
+            void operator()(const NodeBinExpr* bin_expr) const {
                 assert(false);
             }
         };
