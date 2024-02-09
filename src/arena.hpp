@@ -2,7 +2,7 @@
 
 class ArenaAllocator {
 public:
-    inline explicit ArenaAllocator(size_t bytes) : m_size(bytes){
+    inline explicit ArenaAllocator(size_t bytes) : m_size(bytes) {
         m_buffer = static_cast<std::byte*>(malloc(m_size));
         m_offset = m_buffer;
     }
@@ -15,7 +15,9 @@ public:
     }
 
     inline ArenaAllocator(const ArenaAllocator& other) = delete;
-    inline ArenaAllocator operator = (const ArenaAllocator& other) = delete;
+
+    inline ArenaAllocator operator=(const ArenaAllocator& other) = delete;
+
     inline ~ArenaAllocator() {
         free(m_buffer);
     }

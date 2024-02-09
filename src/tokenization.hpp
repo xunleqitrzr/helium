@@ -13,17 +13,18 @@ enum class TokenType {
     ident,
     var,
     eq,
-    plus
+    plus,
+    star
 };
 
 struct Token {
     TokenType type;
-    std::optional<std::string> value {};
+    std::optional<std::string> value{};
 };
 
 class Tokenizer {
 public:
-    inline explicit Tokenizer(std::string src): m_src(std::move(src)) {
+    inline explicit Tokenizer(std::string src) : m_src(std::move(src)) {
 
     }
 
@@ -46,7 +47,8 @@ public:
                     tokens.push_back({.type = TokenType::var});
                     buf.clear();
                     continue;
-                } else {
+                }
+                else {
                     tokens.push_back({.type = TokenType::ident, .value = buf});
                     buf.clear();
                     continue;
@@ -81,6 +83,11 @@ public:
                 tokens.push_back({.type = TokenType::eq});
                 continue;
             }
+            else if (peek().value() == '*') {
+                consume();
+                tokens.push_back({.type = TokenType::star});
+                continue;
+            }
             else if (peek().value() == '+') {
                 consume();
                 tokens.push_back({.type = TokenType::plus});
@@ -89,7 +96,8 @@ public:
             else if (std::isspace(peek().value())) {
                 consume();
                 continue;
-            } else {
+            }
+            else {
                 std::cerr << "Incorrect syntax" << std::endl;
                 exit(EXIT_FAILURE);
             }
@@ -97,12 +105,14 @@ public:
         m_index = 0;
         return tokens;
     }
+
 private:
 
     [[nodiscard]] inline std::optional<char> peek(int offset = 0) const {
         if (m_index + offset >= m_src.length()) {
             return {};
-        } else {
+        }
+        else {
             return m_src.at(m_index + offset);
         }
     }

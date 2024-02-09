@@ -15,6 +15,7 @@ public:
     void gen_term(const NodeTerm* term) {
         struct TermVisitor {
             Generator* gen;
+
             void operator()(const NodeTermIntLit* term_int_lit) const {
                 gen->m_output << "    mov rax, " << term_int_lit->int_lit.value.value() << "\n";
                 gen->push("rax");
@@ -62,6 +63,7 @@ public:
     void gen_stmt(const NodeStmt* stmt) {
         struct StmtVisitor {
             Generator* gen;
+
             void operator()(const NodeStmtExit* stmt_exit) const {
 
                 gen->gen_expr(stmt_exit->expr);
@@ -76,7 +78,7 @@ public:
                     exit(EXIT_FAILURE);
                 }
 
-                gen->m_vars.insert({stmt_var->ident.value.value(), Var {.stack_loc = gen->m_stack_size}});
+                gen->m_vars.insert({stmt_var->ident.value.value(), Var{.stack_loc = gen->m_stack_size}});
                 gen->gen_expr(stmt_var->expr);
             }
         };
@@ -88,7 +90,7 @@ public:
     [[nodiscard]] std::string gen_prog() {
         m_output << "global _start\n_start:\n";
 
-        for (const NodeStmt* stmt : m_prog.stmts) {
+        for (const NodeStmt* stmt: m_prog.stmts) {
             gen_stmt(stmt);
         }
 
@@ -118,5 +120,5 @@ private:
     const NodeProg m_prog;
     std::stringstream m_output;
     size_t m_stack_size = 0;
-    std::unordered_map<std::string, Var> m_vars {};
+    std::unordered_map<std::string, Var> m_vars{};
 };
