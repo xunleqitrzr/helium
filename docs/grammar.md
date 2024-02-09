@@ -10,8 +10,7 @@ $$
     \\
     [\text{Expr}] &\to 
     \begin {cases}
-        \text{int-lit} \\
-        \text{identifier} \\
+        [\text{Term}] \\
         [\text{BinExpr}]
     \end {cases}
     \\
@@ -20,5 +19,11 @@ $$
         [\text{Expr}] * [\text{Expr}] & \text{prec} = 1 \\
         [\text{Expr}] + [\text{Expr}] & \text{prec} = 0 \\
     \end {cases}
+    \\
+    [\text{Term}] &\to 
+    \begin {cases}
+        \text{int-lit} \\
+        \text{identifier}
+    \end{cases}
 \end{align}
 $$
