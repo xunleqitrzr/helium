@@ -56,17 +56,14 @@ public:
                 if (buf == "exit") {
                     tokens.push_back({.type = TokenType::exit});
                     buf.clear();
-                    continue;
                 }
                 else if (buf == "var") {
                     tokens.push_back({.type = TokenType::var});
                     buf.clear();
-                    continue;
                 }
                 else {
                     tokens.push_back({.type = TokenType::ident, .value = buf});
                     buf.clear();
-                    continue;
                 }
             }
             else if (std::isdigit(peek().value())) {
@@ -76,51 +73,41 @@ public:
                 }
                 tokens.push_back({.type = TokenType::int_lit, .value = buf});
                 buf.clear();
-                continue;
             }
             else if (peek().value() == '(') {
                 consume();
                 tokens.push_back({.type = TokenType::l_paren});
-                continue;
             }
             else if (peek().value() == ')') {
                 consume();
                 tokens.push_back({.type = TokenType::r_paren});
-                continue;
             }
             else if (peek().value() == ';') {
                 consume();
                 tokens.push_back({.type = TokenType::semi});
-                continue;
             }
             else if (peek().value() == '=') {
                 consume();
                 tokens.push_back({.type = TokenType::eq});
-                continue;
             }
             else if (peek().value() == '*') {
                 consume();
                 tokens.push_back({.type = TokenType::star});
-                continue;
             }
             else if (peek().value() == '/') {
                 consume();
                 tokens.push_back({.type = TokenType::div});
-                continue;
             }
             else if (peek().value() == '+') {
                 consume();
                 tokens.push_back({.type = TokenType::plus});
-                continue;
             }
             else if (peek().value() == '-') {
                 consume();
                 tokens.push_back({.type = TokenType::sub});
-                continue;
             }
             else if (std::isspace(peek().value())) {
                 consume();
-                continue;
             }
             else {
                 std::cerr << "Incorrect syntax" << std::endl;
