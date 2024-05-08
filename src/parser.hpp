@@ -62,8 +62,14 @@ struct NodeStmtVar {
     NodeExpr* expr;
 };
 
+struct NodeStmt;
+
+struct NodeStmtScope {
+    std::vector<NodeStmt*> stmts;
+};
+
 struct NodeStmt {
-    std::variant<NodeStmtExit*, NodeStmtVar*> var;
+    std::variant<NodeStmtExit*, NodeStmtVar*, NodeStmtScope*> var;
 };
 
 struct NodeProg {
@@ -215,6 +221,16 @@ public:
 
             auto stmt = m_allocator.alloc<NodeStmt>();
             stmt->var = stmt_var;
+            return stmt;
+        }
+        else if (auto open_curly = try_consume(TokenType::l_curly)) {
+            auto scope = m_allocator.alloc<NodeStmtScope>();
+            while (auto stmt = parse_stmt()) {
+                scope->stmts.push_back(stmt.value());
+            }
+            try_consume(TokenType::r_curly, "Expected '}'");
+            auto stmt = m_allocator.alloc<NodeStmt>();
+            stmt->var = scope;
             return stmt;
         }
         else {

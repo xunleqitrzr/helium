@@ -5,7 +5,8 @@ $$
     [\text{Stmt}] &\to 
     \begin {cases}
         \text{exit}([\text{Expr}]); \\
-        \text{var}\space \text{identifier} = [\text{Expr}];
+        \text{var}\space \text{identifier} = [\text{Expr}]; \\
+        \{[\text{Stmt}]^*\}
     \end {cases}
     \\
     [\text{Expr}] &\to 

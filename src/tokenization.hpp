@@ -16,7 +16,9 @@ enum class TokenType {
     star,
     div,
     plus,
-    sub
+    sub,
+    l_curly,
+    r_curly
 };
 
 std::optional<int> bin_prec(TokenType type) {
@@ -105,6 +107,14 @@ public:
             else if (peek().value() == '-') {
                 consume();
                 tokens.push_back({.type = TokenType::sub});
+            }
+            else if (peek().value() == '{') {
+                consume();
+                tokens.push_back({.type = TokenType::l_curly});
+            }
+            else if (peek().value() == '}') {
+                consume();
+                tokens.push_back({.type = TokenType::r_curly});
             }
             else if (std::isspace(peek().value())) {
                 consume();
