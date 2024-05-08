@@ -6,8 +6,14 @@ $$
     \begin {cases}
         \text{exit}([\text{Expr}]); \\
         \text{var}\space \text{identifier} = [\text{Expr}]; \\
-        \{[\text{Stmt}]^*\}
+        \text{if}\ ([\text{Expr}])\ [\text{Scope}] \\
+        [\text{Scope}] \\
     \end {cases}
+    \\
+    [\text{Scope}] &\to 
+    \begin{cases}
+        \{[\text{Stmt}]^*\}
+    \end{cases}
     \\
     [\text{Expr}] &\to 
     \begin {cases}

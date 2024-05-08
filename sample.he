@@ -1,7 +1,8 @@
 var a = (10 - 2 * 3) / 2;
+var b = 0;
 
-if (a) {
-    exit(19);
+if (1 - 2) {
+    exit(4);
 }
 
-exit(a);
+exit(a + 2);

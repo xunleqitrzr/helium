@@ -14,20 +14,21 @@ enum class TokenType {
     var,
     eq,
     star,
-    div,
+    fslash,
     plus,
-    sub,
+    minus,
     l_curly,
-    r_curly
+    r_curly,
+    if_
 };
 
 std::optional<int> bin_prec(TokenType type) {
     switch (type) {
         case TokenType::plus:
-        case TokenType::sub:
+        case TokenType::minus:
             return 0;
         case TokenType::star:
-        case TokenType::div:
+        case TokenType::fslash:
             return 1;
         default:
             return {};
@@ -61,6 +62,10 @@ public:
                 }
                 else if (buf == "var") {
                     tokens.push_back({.type = TokenType::var});
+                    buf.clear();
+                }
+                else if (buf == "if") {
+                    tokens.push_back({.type = TokenType::if_});
                     buf.clear();
                 }
                 else {
@@ -98,7 +103,7 @@ public:
             }
             else if (peek().value() == '/') {
                 consume();
-                tokens.push_back({.type = TokenType::div});
+                tokens.push_back({.type = TokenType::fslash});
             }
             else if (peek().value() == '+') {
                 consume();
@@ -106,7 +111,7 @@ public:
             }
             else if (peek().value() == '-') {
                 consume();
-                tokens.push_back({.type = TokenType::sub});
+                tokens.push_back({.type = TokenType::minus});
             }
             else if (peek().value() == '{') {
                 consume();
