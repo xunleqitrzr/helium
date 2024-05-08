@@ -2,7 +2,7 @@ var a = (10 - 2 * 3) / 2;
 var b = 0;
 
 if (1 - 2) {
-    exit(4);
+    exit(9);
 }
 
 exit(a + 2);

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cassert>
+#include <algorithm>
 
 #include "./parser.hpp"
 
@@ -21,7 +22,7 @@ public:
             }
 
             void operator()(const NodeTermIdent* term_ident) const {
-                auto it = std::find_if(gen.m_vars.cbegin(), gen.m_vars.cend(), [&](const Var& var) {
+                const auto it = std::ranges::find_if(std::as_const(gen.m_vars), [&](const Var& var) {
                     return var.name == term_ident->ident.value.value();
                 });
 
@@ -30,7 +31,7 @@ public:
                     exit(EXIT_FAILURE);
                 }
                 std::stringstream offset;
-                offset << "QWORD [rsp + " << ((gen.m_stack_size - (*it).stack_loc - 1) * 8) << "]";
+                offset << "QWORD [rsp + " << ((gen.m_stack_size - it->stack_loc - 1) * 8) << "]";
                 gen.push(offset.str());
             }
 
@@ -128,10 +129,9 @@ public:
             }
 
             void operator()(const NodeStmtVar* stmt_var) const {
-                auto it = std::find_if(gen.m_vars.cbegin(), gen.m_vars.cend(), [&](const Var& var) {
+                if (std::ranges::find_if(std::as_const(gen.m_vars), [&](const Var& var) {
                     return var.name == stmt_var->ident.value.value();
-                });
-                if (it != gen.m_vars.cend()) {
+                }) != gen.m_vars.cend()) {
                     std::cerr << "Identifier already declared: " << stmt_var->ident.value.value() << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -147,7 +147,7 @@ public:
             void operator()(const NodeStmtIf* stmt_if) const {
                 gen.gen_expr(stmt_if->expr);
                 gen.pop("rax");
-                std::string label = gen.create_label();
+                const std::string label = gen.create_label();
                 gen.m_output << "    test rax, rax\n";
                 gen.m_output << "    jz " << label << "\n";
                 gen.gen_scope(stmt_if->scope);
@@ -189,7 +189,7 @@ private:
     }
 
     void end_scope() {
-        size_t pop_count = m_vars.size() - m_scopes.back();
+        const size_t pop_count = m_vars.size() - m_scopes.back();
         m_output << "    add rsp, " << pop_count * 8 << "\n";
         m_stack_size -= pop_count;
 
