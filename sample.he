@@ -1,14 +1,13 @@
-var a = (10 - 2 * 3) / 2;
-var b = 0;
+var y = (10 - 2 * 3) / 2;
+var x = 1;
 
-;; comment
-;; yay it works
-
-if (1 - 1) {
+if (1) {
     exit(9);
+} elif (0) {
+    exit(8);
+} else {
+    exit(1);
 }
 
-
-
-exit(a + 2); ;*
+exit(x + 2); ;*
 exit(31);*;

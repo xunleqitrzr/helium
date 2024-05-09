@@ -6,13 +6,20 @@ $$
     \begin {cases}
         \text{exit}([\text{Expr}]); \\
         \text{var}\space \text{identifier} = [\text{Expr}]; \\
-        \text{if}\ ([\text{Expr}])\ [\text{Scope}] \\
+        \text{if}\ ([\text{Expr}]) \ [\text{Scope}] \ [\text{IfPred}] \\
         [\text{Scope}] \\
     \end {cases}
     \\
     [\text{Scope}] &\to 
     \begin{cases}
-        \{[\text{Stmt}]^*\}
+        \{[\text{Stmt}]^*\} \\
+    \end{cases}
+    \\
+    [\text{IfPred}] &\to
+    \begin{cases}
+        \text{elif([Expr])} \ \text{[Scope]} \ [\text{IfPred}] \\
+        \text{else} \ [\text{Scope}] \\
+        \epsilon \\
     \end{cases}
     \\
     [\text{Expr}] &\to 

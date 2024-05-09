@@ -19,7 +19,9 @@ enum class TokenType {
     minus,
     l_curly,
     r_curly,
-    if_
+    if_,
+    elif,
+    else_
 };
 
 inline std::optional<int> bin_prec(const TokenType type) {
@@ -66,6 +68,14 @@ public:
                 }
                 else if (buf == "if") {
                     tokens.push_back({.type = TokenType::if_});
+                    buf.clear();
+                }
+                else if (buf == "elif") {
+                    tokens.push_back({.type = TokenType::elif});
+                    buf.clear();
+                }
+                else if (buf == "else") {
+                    tokens.push_back({.type = TokenType::else_});
                     buf.clear();
                 }
                 else {
