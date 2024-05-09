@@ -89,9 +89,13 @@ struct NodeStmtIf {
     std::optional<NodeIfPred*> pred;
 };
 
-//TODO: use using instead of variants
+struct NodeStmtAssign {
+    Token ident;
+    NodeExpr* expr{};
+};
+
 struct NodeStmt {
-    std::variant<NodeStmtExit*, NodeStmtVar*, NodeScope*, NodeStmtIf*> var;
+    std::variant<NodeStmtExit*, NodeStmtVar*, NodeScope*, NodeStmtIf*, NodeStmtAssign*> var;
 };
 
 struct NodeProg {
@@ -275,12 +279,27 @@ public:
             stmt->var = stmt_var;
             return stmt;
         }
-        if (peek().has_value() && peek().value().type == TokenType::l_paren) {
+        if (peek().has_value() && peek().value().type == TokenType::ident && peek(1).has_value() &&
+            peek(1).value().type == TokenType::eq) {
+            const auto assign = m_allocator.alloc<NodeStmtAssign>();
+            assign->ident = consume();
+            consume();
+            if (const auto expr = parse_expr()) {
+                assign->expr = expr.value();
+            } else {
+                std::cerr << "Expected expression at variable assignment." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            try_consume(TokenType::semi, "Semicolon expected after variable assignment");
+            auto stmt = m_allocator.emplace<NodeStmt>(assign);
+            return stmt;
+        }
+        if (peek().has_value() && peek().value().type == TokenType::l_curly) {
             if (auto scope = parse_scope()) {
                 auto stmt = m_allocator.emplace<NodeStmt>(scope.value());
                 return stmt;
             }
-            std::cerr << "Invalid expression" << std::endl;
+            std::cerr << "Invalid scope" << std::endl;
             exit(EXIT_FAILURE);
         }
         if (auto if_ = try_consume(TokenType::if_)) {
@@ -289,7 +308,7 @@ public:
             if (const auto expr = parse_expr()) {
                 stmt_if->expr = expr.value();
             } else {
-                std::cerr << "Invalid scope" << std::endl;
+                std::cerr << "Invalid expression" << std::endl;
                 exit(EXIT_FAILURE);
             }
             try_consume(TokenType::r_paren, "Expected ')'");

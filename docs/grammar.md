@@ -6,6 +6,7 @@ $$
     \begin {cases}
         \text{exit}([\text{Expr}]); \\
         \text{var}\space \text{identifier} = [\text{Expr}]; \\
+        \text{ident} \ = \ [\text{Expr}]; \\
         \text{if}\ ([\text{Expr}]) \ [\text{Scope}] \ [\text{IfPred}] \\
         [\text{Scope}] \\
     \end {cases}

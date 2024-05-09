@@ -2,12 +2,11 @@ var y = (10 - 2 * 3) / 2;
 var x = 1;
 
 if (1) {
-    exit(9);
+    x = 1;
 } elif (0) {
-    exit(8);
+    x = 2;
 } else {
-    exit(1);
+    x = 3;
 }
 
-exit(x + 2); ;*
-exit(31);*;
+exit(x);
