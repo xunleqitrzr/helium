@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <string>
 #include <vector>
 #include <optional>
@@ -207,7 +208,7 @@ public:
                 consume();
             }
             else {
-                std::cerr << "Incorrect syntax" << std::endl;
+                std::cerr << "Incorrect syntax on line " << line_count << std::endl;
                 exit(EXIT_FAILURE);
             }
         }
